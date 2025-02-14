@@ -8,9 +8,9 @@
 </head>
 <body>
     <h1>User Dashboard - QR Code Scanner</h1>
-    
+
     <video id="video" autoplay></video>
-    <canvas id="canvas" style="display: none;"></canvas>
+    <canvas id="canvas" style="border: 1px solid red; display: block;"></canvas>
     <p><strong>QR Code Data:</strong> <span id="qrResult">Scanning...</span></p>
 
     <script>
@@ -18,39 +18,62 @@
         const canvas = document.getElementById("canvas");
         const qrResult = document.getElementById("qrResult");
         const context = canvas.getContext("2d");
-
-        // Access the camera
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-            .then(stream => video.srcObject = stream)
-            .catch(err => console.error("Camera access error:", err));
-
+    
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: { ideal: "environment" } } // Try back camera
+                });
+                video.srcObject = stream;
+                console.log("Camera started successfully.");
+            } catch (err) {
+                console.error("Camera access error:", err);
+                alert("Error accessing camera. Please allow permissions.");
+            }
+        }
+    
         function scanQRCode() {
             if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                console.log("Processing video frame...");
                 canvas.width = video.videoWidth;
                 canvas.height = video.videoHeight;
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
+    
                 const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-                const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "dontInvert" });
-
+                console.log("Captured image data for processing.");
+    
+                const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                    inversionAttempts: "dontInvert"
+                });
+    
                 if (code) {
-                    qrResult.textContent = code.data;
-
-                    // Send QR code to Flask backend
+                    console.log("QR Code Detected:", code.data);
+                    qrResult.textContent = `QR Code: ${code.data}`;
+    
                     fetch("/log_qr", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ qr_code: code.data })
-                    }).then(response => response.json())
-                    .then(data => console.log("Logged QR:", data))
+                    })
+                    .then(response => response.json())
+                    .then(data => console.log("QR Logged Successfully:", data))
                     .catch(error => console.error("Error logging QR:", error));
+    
+                    setTimeout(scanQRCode, 2000); // Delay before scanning again
+                    return;
                 }
             }
             requestAnimationFrame(scanQRCode);
         }
-
-        video.addEventListener("play", scanQRCode);
+    
+        video.addEventListener("play", () => {
+            console.log("Video play event detected. Starting QR scan.");
+            scanQRCode();
+        });
+    
+        startCamera();
     </script>
+    
 
     <br>
     <a href="{{ url_for('logout') }}">Logout</a>

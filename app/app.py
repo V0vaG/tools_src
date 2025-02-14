@@ -1,12 +1,15 @@
 from flask import Flask, render_template, redirect, request, url_for, flash, session
 import json
 import os
+import requests
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
 ROOT_USER_FILE = 'root_user.json'
 MANAGER_USERS_FILE = 'manager_users.json'
+JSQR_FILE = 'static/jsQR.js'
+JSQR_URL = 'https://raw.githubusercontent.com/cozmo/jsQR/master/dist/jsQR.js'
 
 def load_root_user():
     if os.path.exists(ROOT_USER_FILE):
@@ -51,6 +54,20 @@ def save_user(manager_username, username, password):
             break
     with open(MANAGER_USERS_FILE, 'w') as file:
         json.dump(managers, file)
+
+
+def ensure_jsqr_library():
+    os.makedirs('static', exist_ok=True)  # Ensure static directory exists
+    if not os.path.exists(JSQR_FILE):
+        print("Downloading jsQR library...")
+        response = requests.get(JSQR_URL)
+        if response.status_code == 200:
+            with open(JSQR_FILE, 'w', encoding='utf-8') as file:
+                file.write(response.text)
+            print("jsQR library downloaded successfully.")
+        else:
+            print("Failed to download jsQR library.")
+
 
 @app.before_request
 def check_root_user():
@@ -179,4 +196,5 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
+    ensure_jsqr_library()
     app.run(debug=True)
