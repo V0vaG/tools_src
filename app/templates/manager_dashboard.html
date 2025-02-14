@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Manager Dashboard</title>
 </head>
 <body>
-    <h2>Welcome to the Dashboard!</h2>
+    <h2>Welcome to the Manager Dashboard!</h2>
 
-    <a href="{{ url_for('register_manager') }}">
-        <button>Add Manager User</button>
+    <a href="{{ url_for('register_user') }}">
+        <button>Add User</button>
     </a>
 
-    <h3>Manager Users</h3>
+    <h3>Users List</h3>
     <table border="1">
         <tr>
             <th>Username</th>
         </tr>
-        {% for manager in managers %}
+        {% for user in users %}
         <tr>
-            <td>{{ manager.username }}</td>
+            <td>{{ user.username }}</td>
         </tr>
         {% endfor %}
     </table>

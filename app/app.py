@@ -31,7 +31,24 @@ def load_manager_users():
 def save_manager_user(username, password):
     password_hash = generate_password_hash(password, method='pbkdf2:sha256')
     managers = load_manager_users()
-    managers.append({'username': username, 'password_hash': password_hash})
+    managers.append({'manager_username': username, 'password_hash': password_hash, 'users': []})
+    with open(MANAGER_USERS_FILE, 'w') as file:
+        json.dump(managers, file)
+
+def load_users(manager_username):
+    managers = load_manager_users()
+    for manager in managers:
+        if manager['manager_username'] == manager_username:
+            return manager['users']
+    return []
+
+def save_user(manager_username, username, password):
+    password_hash = generate_password_hash(password, method='pbkdf2:sha256')
+    managers = load_manager_users()
+    for manager in managers:
+        if manager['manager_username'] == manager_username:
+            manager['users'].append({'user': username, 'password_hash': password_hash})
+            break
     with open(MANAGER_USERS_FILE, 'w') as file:
         json.dump(managers, file)
 
@@ -76,6 +93,26 @@ def register_manager():
     
     return render_template('register_manager.html')
 
+@app.route('/register_user', methods=['GET', 'POST'])
+def register_user():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    manager_username = session['user_id']
+    
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        
+        if password != confirm_password:
+            flash('Passwords do not match!', 'danger')
+        else:
+            save_user(manager_username, username, password)
+            flash('User registered successfully!', 'success')
+            return redirect(url_for('manager_dashboard'))
+    
+    return render_template('register_user.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     root_user = load_root_user()
@@ -90,10 +127,10 @@ def login():
             flash('Login successful!', 'success')
             return redirect(url_for('dashboard'))
         for manager in manager_users:
-            if username == manager['username'] and check_password_hash(manager['password_hash'], password):
+            if username == manager['manager_username'] and check_password_hash(manager['password_hash'], password):
                 session['user_id'] = username
                 flash('Login successful!', 'success')
-                return redirect(url_for('dashboard'))
+                return redirect(url_for('manager_dashboard'))
         
         flash('Invalid username or password.', 'danger')
     
@@ -103,7 +140,16 @@ def login():
 def dashboard():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    return render_template('dashboard.html')
+    managers = load_manager_users()
+    return render_template('dashboard.html', managers=managers)
+
+@app.route('/manager_dashboard')
+def manager_dashboard():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    manager_username = session['user_id']
+    users = load_users(manager_username)
+    return render_template('manager_dashboard.html', users=users)
 
 @app.route('/logout')
 def logout():
