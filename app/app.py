@@ -1,7 +1,6 @@
 from flask import Flask, render_template, redirect, request, url_for, flash, session
 import json
 import os
-from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
@@ -13,8 +12,7 @@ def load_root_user():
             return json.load(file)
     return None
 
-def save_root_user(username, password):
-    password_hash = generate_password_hash(password, method='pbkdf2:sha256')
+def save_root_user(username, password_hash):
     with open(ROOT_USER_FILE, 'w') as file:
         json.dump({'username': username, 'password_hash': password_hash}, file)
 
@@ -54,7 +52,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
         
-        if root_user and username == root_user['username'] and check_password_hash(root_user['password_hash'], password):
+        if root_user and username == root_user['username'] and password == root_user['password_hash']:
             session['user_id'] = username
             flash('Login successful!', 'success')
             return redirect(url_for('dashboard'))
