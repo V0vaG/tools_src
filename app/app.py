@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
 ROOT_USER_FILE = 'root_user.json'
+MANAGER_USERS_FILE = 'manager_users.json'
 
 def load_root_user():
     if os.path.exists(ROOT_USER_FILE):
@@ -20,6 +21,19 @@ def save_root_user(username, password):
 
 def is_root_registered():
     return os.path.exists(ROOT_USER_FILE)
+
+def load_manager_users():
+    if os.path.exists(MANAGER_USERS_FILE):
+        with open(MANAGER_USERS_FILE, 'r') as file:
+            return json.load(file)
+    return []
+
+def save_manager_user(username, password):
+    password_hash = generate_password_hash(password, method='pbkdf2:sha256')
+    managers = load_manager_users()
+    managers.append({'username': username, 'password_hash': password_hash})
+    with open(MANAGER_USERS_FILE, 'w') as file:
+        json.dump(managers, file)
 
 @app.before_request
 def check_root_user():
@@ -46,9 +60,26 @@ def register_root():
     
     return render_template('register_root.html')
 
+@app.route('/register_manager', methods=['GET', 'POST'])
+def register_manager():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        
+        if password != confirm_password:
+            flash('Passwords do not match!', 'danger')
+        else:
+            save_manager_user(username, password)
+            flash('Manager user registered successfully!', 'success')
+            return redirect(url_for('dashboard'))
+    
+    return render_template('register_manager.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     root_user = load_root_user()
+    manager_users = load_manager_users()
     
     if request.method == 'POST':
         username = request.form['username']
@@ -58,8 +89,13 @@ def login():
             session['user_id'] = username
             flash('Login successful!', 'success')
             return redirect(url_for('dashboard'))
-        else:
-            flash('Invalid username or password.', 'danger')
+        for manager in manager_users:
+            if username == manager['username'] and check_password_hash(manager['password_hash'], password):
+                session['user_id'] = username
+                flash('Login successful!', 'success')
+                return redirect(url_for('dashboard'))
+        
+        flash('Invalid username or password.', 'danger')
     
     return render_template('login.html')
 
