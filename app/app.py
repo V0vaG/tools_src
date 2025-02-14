@@ -1,33 +1,35 @@
 from flask import Flask, render_template, redirect, request, url_for, flash, session
-from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash, check_password_hash
+import json
 import os
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(os.getcwd(), 'users.db')
+ROOT_USER_FILE = 'app/root_user.json'
 
-db = SQLAlchemy(app)
+def load_root_user():
+    if os.path.exists(ROOT_USER_FILE):
+        with open(ROOT_USER_FILE, 'r') as file:
+            return json.load(file)
+    return None
 
+def save_root_user(username, password):
+    password_hash = generate_password_hash(password, method='pbkdf2:sha256')
+    with open(ROOT_USER_FILE, 'w') as file:
+        json.dump({'username': username, 'password_hash': password_hash}, file)
 
-print(f"Database is stored at: {os.path.abspath('users.db')}")
-
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password_hash = db.Column(db.String(256), nullable=False)
-    is_root = db.Column(db.Boolean, default=False)
+def is_root_registered():
+    return os.path.exists(ROOT_USER_FILE)
 
 @app.before_request
 def check_root_user():
-    if not User.query.filter_by(is_root=True).first():
+    if not is_root_registered():
         if request.endpoint not in ('register_root', 'static'):
             return redirect(url_for('register_root'))
 
 @app.route('/register_root', methods=['GET', 'POST'])
 def register_root():
-    if User.query.filter_by(is_root=True).first():
+    if is_root_registered():
         return redirect(url_for('login'))
     
     if request.method == 'POST':
@@ -38,10 +40,7 @@ def register_root():
         if password != confirm_password:
             flash('Passwords do not match!', 'danger')
         else:
-            hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
-            new_user = User(username=username, password_hash=hashed_password, is_root=True)
-            db.session.add(new_user)
-            db.session.commit()
+            save_root_user(username, password)
             flash('Root user registered successfully!', 'success')
             return redirect(url_for('login'))
     
@@ -49,13 +48,14 @@ def register_root():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    root_user = load_root_user()
+    
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        user = User.query.filter_by(username=username).first()
         
-        if user and check_password_hash(user.password_hash, password):
-            session['user_id'] = user.id
+        if root_user and username == root_user['username'] and check_password_hash(root_user['password_hash'], password):
+            session['user_id'] = username
             flash('Login successful!', 'success')
             return redirect(url_for('dashboard'))
         else:
@@ -76,7 +76,4 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
-    with app.app_context():
-        if not os.path.exists('users.db'):
-            db.create_all()
     app.run(debug=True)
