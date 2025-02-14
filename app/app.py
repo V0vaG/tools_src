@@ -131,6 +131,11 @@ def login():
                 session['user_id'] = username
                 flash('Login successful!', 'success')
                 return redirect(url_for('manager_dashboard'))
+            for user in manager['users']:
+                if username == user['user'] and check_password_hash(user['password_hash'], password):
+                    session['user_id'] = username
+                    flash('Login successful!', 'success')
+                    return redirect(url_for('user_dashboard'))
         
         flash('Invalid username or password.', 'danger')
     
@@ -150,6 +155,22 @@ def manager_dashboard():
     manager_username = session['user_id']
     users = load_users(manager_username)
     return render_template('manager_dashboard.html', users=users)
+
+@app.route('/user_dashboard')
+def user_dashboard():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    return render_template('user_dashboard.html')
+
+@app.route('/log_qr', methods=['POST'])
+def log_qr():
+    data = request.json
+    qr_code = data.get("qr_code", "")
+    if qr_code:
+        print(f"Scanned QR Code: {qr_code}")
+        return jsonify({"message": "QR Code received", "data": qr_code})
+    return jsonify({"error": "No QR Code received"}), 400
+
 
 @app.route('/logout')
 def logout():

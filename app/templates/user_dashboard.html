@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - QR Code Scanner</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+</head>
+<body>
+    <h1>User Dashboard - QR Code Scanner</h1>
+    
+    <video id="video" autoplay></video>
+    <canvas id="canvas" style="display: none;"></canvas>
+    <p><strong>QR Code Data:</strong> <span id="qrResult">Scanning...</span></p>
+
+    <script>
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const qrResult = document.getElementById("qrResult");
+        const context = canvas.getContext("2d");
+
+        // Access the camera
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+            .then(stream => video.srcObject = stream)
+            .catch(err => console.error("Camera access error:", err));
+
+        function scanQRCode() {
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "dontInvert" });
+
+                if (code) {
+                    qrResult.textContent = code.data;
+
+                    // Send QR code to Flask backend
+                    fetch("/log_qr", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ qr_code: code.data })
+                    }).then(response => response.json())
+                    .then(data => console.log("Logged QR:", data))
+                    .catch(error => console.error("Error logging QR:", error));
+                }
+            }
+            requestAnimationFrame(scanQRCode);
+        }
+
+        video.addEventListener("play", scanQRCode);
+    </script>
+
+    <br>
+    <a href="{{ url_for('logout') }}">Logout</a>
+</body>
+</html>
