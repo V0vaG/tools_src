@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request, url_for, flash, session
+from flask import Flask, render_template, redirect, request, url_for, flash, session, jsonify
 import json
 import os
 import requests
@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
 ROOT_USER_FILE = 'root_user.json'
 MANAGER_USERS_FILE = 'manager_users.json'
-JSQR_FILE = 'static/jsQR.js'
+JSQR_FILE = 'app/static/jsQR.js'
 JSQR_URL = 'https://raw.githubusercontent.com/cozmo/jsQR/master/dist/jsQR.js'
 
 def load_root_user():
