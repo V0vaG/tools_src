@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner</title>
+    <script src="{{ url_for('static', filename='jsQR.js') }}"></script>
+</head>
+<body>
+    <h1>QR Code Scanner</h1>
+
+    <video id="video" autoplay></video>
+    <canvas id="canvas" style="border: 1px solid red; display: none;"></canvas>
+    <p><strong>QR Code Data:</strong> <span id="qrResult">Scanning...</span></p>
+
+    <script>
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const qrResult = document.getElementById("qrResult");
+        const context = canvas.getContext("2d");
+
+        async function startCamera() {
+            try {
+                const constraints = { video: { facingMode: "environment" } };
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                video.srcObject = stream;
+            } catch (err) {
+                alert("Camera access failed! Please allow camera permissions.");
+                console.error(err);
+            }
+        }
+
+        function scanQRCode() {
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "dontInvert" });
+
+                if (code) {
+                    qrResult.textContent = `QR Code: ${code.data}`;
+                    setTimeout(() => {
+                        window.location.href = "{{ url_for('add_tool') }}?scanned_id=" + encodeURIComponent(code.data);
+                    }, 1000); // Redirect after scanning
+                    return;
+                }
+            }
+            requestAnimationFrame(scanQRCode);
+        }
+
+        video.addEventListener("play", scanQRCode);
+        startCamera();
+    </script>
+
+    <br>
+    <a href="{{ url_for('add_tool') }}">Back to Add Tool</a>
+</body>
+</html>

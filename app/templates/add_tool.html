@@ -13,7 +13,10 @@
         <input type="text" id="tool_name" name="tool_name" required>
 
         <label for="tool_id">ID:</label>
-        <input type="text" id="tool_id" name="tool_id" required>
+        <input type="text" id="tool_id" name="tool_id" required value="{{ request.args.get('scanned_id', '') }}">
+        <a href="{{ url_for('scan_qr') }}">
+            <button type="button">Scan QR</button>
+        </a>
 
         <label for="tool_description">Description:</label>
         <textarea id="tool_description" name="tool_description" required></textarea>

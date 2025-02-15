@@ -79,6 +79,46 @@ def remove_user(manager_username, username):
             break
     save_users(users)
 
+
+def update_tool_status(manager_username, tool_id, user_name):
+    users = load_users()
+    for manager in users[1]["users"]:
+        if manager['manager_username'] == manager_username:
+            for tool in manager.get("tools", []):
+                if tool['id'] == tool_id:
+                    tool['status'] = user_name
+                    save_users(users)
+                    return True
+    return False
+
+@app.route('/scan_tool', methods=['GET', 'POST'])
+def scan_tool():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    user_name = session['user_id']
+    manager_username = None
+    users = load_users()
+    for manager in users[1]["users"]:
+        for user in manager.get("users", []):
+            if user['user'] == user_name:
+                manager_username = manager['manager_username']
+                break
+    
+    if not manager_username:
+        flash('User not assigned to any manager.', 'danger')
+        return redirect(url_for('user_dashboard'))
+    
+    if request.method == 'POST':
+        tool_id = request.form['tool_id']
+        if update_tool_status(manager_username, tool_id, user_name):
+            flash('Tool status updated successfully!', 'success')
+        else:
+            flash('Tool not found or does not belong to your manager.', 'danger')
+        return redirect(url_for('user_dashboard'))
+    
+    return render_template('scan_tool.html')
+
 @app.route('/remove_user', methods=['POST'])
 def remove_user_route():
     if 'user_id' not in session:
@@ -94,6 +134,10 @@ def check_root_user():
     if not is_root_registered():
         if request.endpoint not in ('register_root', 'static'):
             return redirect(url_for('register_root'))
+
+@app.route('/scan_qr')
+def scan_qr():
+    return render_template('scan_qr.html')
 
 @app.route('/register_root', methods=['GET', 'POST'])
 def register_root():
