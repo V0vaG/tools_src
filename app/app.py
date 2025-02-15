@@ -197,4 +197,4 @@ def logout():
 
 if __name__ == '__main__':
     ensure_jsqr_library()
-    app.run(debug=True)
+    app.run(debug=True, threaded=True)
