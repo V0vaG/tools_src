@@ -8,14 +8,16 @@
 <body>
     <h2>Scan or Enter Tool ID</h2>
 
-    <form action="{{ url_for('scan_tool') }}" method="post">
+    <form action="{{ url_for('scan_tool', action=request.args.get('action', 'take')) }}" method="post">
         <label for="tool_id">Tool ID:</label>
         <input type="text" id="tool_id" name="tool_id" required value="{{ request.args.get('scanned_id', '') }}">
         <a href="{{ url_for('scan_qr') }}">
             <button type="button">Scan QR</button>
         </a>
         <br><br>
-        <button type="submit">Submit</button>
+        <button type="submit">
+            {% if request.args.get('action') == 'return' %}Return Tool{% else %}Take Tool{% endif %}
+        </button>
         <a href="{{ url_for('user_dashboard') }}">
             <button type="button">Back</button>
         </a>

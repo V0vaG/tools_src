@@ -12,6 +12,10 @@
                     {
                         "user": "a",
                         "password_hash": "pbkdf2:sha256:600000$v1VTXZYYQgHeLNW4$1faf8b8d52c1bb39dcb71b5d7b7e9bf88347e11eca387e16dd33ef9298e70665"
+                    },
+                    {
+                        "user": "vova",
+                        "password_hash": "pbkdf2:sha256:600000$GXSjFWEvp9ujhlwa$da660c383eabb3c567f27909fb627ae78d82c9366c514fb7ee97415491975e18"
                     }
                 ],
                 "tools": [
@@ -19,13 +23,13 @@
                         "name": "test1",
                         "id": "1234",
                         "description": "111",
-                        "status": "a"
+                        "status": "HOME"
                     },
                     {
                         "name": "tt",
                         "id": "11",
                         "description": "11",
-                        "status": "a"
+                        "status": "HOME"
                     }
                 ]
             },

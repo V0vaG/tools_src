@@ -54,6 +54,15 @@ def get_users(manager_username):
             return manager['users']
     return []
 
+def get_user_tools(user_name):
+    users = load_users()
+    user_tools = []
+    for manager in users[1]["users"]:
+        for tool in manager.get("tools", []):
+            if tool['status'] == user_name:
+                user_tools.append(tool)
+    return user_tools
+
 def save_user(manager_username, username, password):
     password_hash = generate_password_hash(password, method='pbkdf2:sha256')
     users = load_users()
@@ -78,7 +87,6 @@ def remove_user(manager_username, username):
             manager["users"] = [user for user in manager.get("users", []) if user["user"] != username]
             break
     save_users(users)
-
 
 def update_tool_status(manager_username, tool_id, user_name):
     users = load_users()
@@ -111,13 +119,23 @@ def scan_tool():
     
     if request.method == 'POST':
         tool_id = request.form['tool_id']
-        if update_tool_status(manager_username, tool_id, user_name):
-            flash('Tool status updated successfully!', 'success')
+        action = request.args.get('action')
+        
+        if action == 'take':
+            if update_tool_status(manager_username, tool_id, user_name):
+                flash('Tool status updated successfully!', 'success')
+            else:
+                flash('Tool not found or does not belong to your manager.', 'danger')
+        elif action == 'return':
+            if update_tool_status(manager_username, tool_id, 'HOME'):
+                flash('Tool returned successfully!', 'success')
+            else:
+                flash('Tool not found or does not belong to your manager.', 'danger')
         else:
-            flash('Tool not found or does not belong to your manager.', 'danger')
+            flash('Invalid action.', 'danger')
         return redirect(url_for('user_dashboard'))
     
-    return render_template('scan_tool.html')
+    return render_template('scan_tool.html', action=request.args.get('action'))
 
 @app.route('/remove_user', methods=['POST'])
 def remove_user_route():
@@ -237,7 +255,11 @@ def manager_dashboard():
 def user_dashboard():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    return render_template('user_dashboard.html')
+    
+    user_name = session['user_id']
+    user_tools = get_user_tools(user_name)
+    
+    return render_template('user_dashboard.html', tools=user_tools)
 
 @app.route('/add_tool', methods=['GET', 'POST'])
 def add_tool():
