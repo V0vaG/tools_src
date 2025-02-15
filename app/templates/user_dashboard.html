@@ -22,14 +22,18 @@
     
         async function startCamera() {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: { ideal: "environment" } } // Try back camera
-                });
+                const constraints = {
+                    video: {
+                        facingMode: { ideal: "environment" } // Back camera on mobile
+                    }
+                };
+    
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
                 video.srcObject = stream;
                 console.log("Camera started successfully.");
             } catch (err) {
                 console.error("Camera access error:", err);
-                alert("Error accessing camera. Please allow permissions.");
+                alert("Camera access failed! Please allow camera permissions in browser settings.");
             }
         }
     
@@ -67,13 +71,10 @@
             requestAnimationFrame(scanQRCode);
         }
     
-        video.addEventListener("play", () => {
-            console.log("Video play event detected. Starting QR scan.");
-            scanQRCode();
-        });
-    
+        video.addEventListener("play", scanQRCode);
         startCamera();
     </script>
+    
     
 
     <br>
