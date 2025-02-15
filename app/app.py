@@ -197,7 +197,7 @@ def save_tool(manager_username, tool_name, tool_id, tool_description):
     users = load_users()
     for manager in users[1]["users"]:
         if manager['manager_username'] == manager_username:
-            manager.setdefault("tools", []).append({"name": tool_name, "id": tool_id, "description": tool_description})
+            manager.setdefault("tools", []).append({"name": tool_name, "id": tool_id, "description": tool_description, "status": "HOME"})
             break
     save_users(users)
 

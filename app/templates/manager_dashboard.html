@@ -34,12 +34,14 @@
             <th>Tool Name</th>
             <th>ID</th>
             <th>Description</th>
+            <th>Status</th>
         </tr>
         {% for tool in tools %}
         <tr>
             <td>{{ tool.name }}</td>
             <td>{{ tool.id }}</td>
             <td>{{ tool.description }}</td>
+            <td>{{ tool.status }}</td>
         </tr>
         {% endfor %}
     </table>
