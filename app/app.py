@@ -102,7 +102,7 @@ def register_manager():
         else:
             save_manager_user(username, password)
             flash('Manager user registered successfully!', 'success')
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('root_dashboard'))
     
     return render_template('register_manager.html')
 
@@ -137,7 +137,7 @@ def login():
         
         if root_user and username == root_user['root_user'] and check_password_hash(root_user['password_hash'], password):
             session['user_id'] = username
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('root_dashboard'))
         for manager in manager_users:
             if username == manager['manager_username'] and check_password_hash(manager['password_hash'], password):
                 session['user_id'] = username
@@ -149,12 +149,12 @@ def login():
         flash('Invalid username or password.', 'danger')
     return render_template('login.html')
 
-@app.route('/dashboard')
-def dashboard():
+@app.route('/root_dashboard')
+def root_dashboard():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     managers = get_managers()
-    return render_template('dashboard.html', managers=managers)
+    return render_template('root_dashboard.html', managers=managers)
 
 @app.route('/manager_dashboard')
 def manager_dashboard():
