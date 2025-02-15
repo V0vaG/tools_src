@@ -1,14 +1,23 @@
 [{"root_user": "vova", "password_hash": "pbkdf2:sha256:600000$MF2MoD...."},
     {"users":[
         {"manager_username": "v1", "password_hash": "pbkdf2:sha256:600000$MF2M.....",
-            "users":[ 
+            "users": [ 
                 {"user": "user1", "password_hash": "pbkdf2:sha256:600000$M....................."}, 
-                {"user": "user2", "password_hash": "pbkdf2:sha256:60................................."}]
+                {"user": "user2", "password_hash": "pbkdf2:sha256:60................................."}],
+            "tools": [
+                {"name": "car",
+                "id": "123",
+                "description": "first car"},
+                {"name": "car2",
+                "id": "12345",
+                "description": "second  car"}
+            ]
         },
         {"manager_username": "v2", "password_hash": "pbkdf2:sha256:600000$e2C7.....",
-            "users":[ 
+            "users": [ 
                 {"user": "user1a", "password_hash": "pbkdf2:sha256:600000$M....................."}, 
-                {"user": "user2a", "password_hash": "pbkdf2:sha256:60................................."}]
+                {"user": "user2a", "password_hash": "pbkdf2:sha256:60................................."}],
+            "tools": []
         }]
     }
 ]

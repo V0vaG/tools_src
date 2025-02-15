@@ -170,6 +170,30 @@ def user_dashboard():
         return redirect(url_for('login'))
     return render_template('user_dashboard.html')
 
+@app.route('/add_tool', methods=['GET', 'POST'])
+def add_tool():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    manager_username = session['user_id']
+    if request.method == 'POST':
+        tool_name = request.form['tool_name']
+        tool_id = request.form['tool_id']
+        tool_description = request.form['tool_description']
+        save_tool(manager_username, tool_name, tool_id, tool_description)
+        flash(f'Tool "{tool_name}" added successfully!', 'success')
+        return redirect(url_for('manager_dashboard'))
+
+    return render_template('add_tool.html')
+
+def save_tool(manager_username, tool_name, tool_id, tool_description):
+    users = load_users()
+    for manager in users[1]["users"]:
+        if manager['manager_username'] == manager_username:
+            manager.setdefault("tools", []).append({"name": tool_name, "id": tool_id, "description": tool_description})
+            break
+    save_users(users)
+
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)

@@ -12,6 +12,10 @@
         <button>Add User</button>
     </a>
 
+    <a href="{{ url_for('add_tool') }}">
+        <button>Add Tool</button>
+    </a>
+
     <h3>Users List</h3>
     <table border="1">
         <tr>
@@ -19,7 +23,7 @@
         </tr>
         {% for user in users %}
         <tr>
-            <td>{{ user.username }}</td>
+            <td>{{ user.user }}</td>
         </tr>
         {% endfor %}
     </table>

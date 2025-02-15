@@ -13,6 +13,18 @@
                         "user": "a",
                         "password_hash": "pbkdf2:sha256:600000$90T8MJEujfgFc26T$f216a36cbd03546c59a6973298dd08296353463576aabec3392365a39f23d710"
                     }
+                ],
+                "tools": [
+                    {
+                        "name": "car_1",
+                        "id": "1",
+                        "description": "111 car"
+                    },
+                    {
+                        "name": "car 2",
+                        "id": "222",
+                        "description": "222 car"
+                    }
                 ]
             },
             {

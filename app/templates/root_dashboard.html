@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Root Dashboard</title>
 </head>
 <body>
-    <h2>Welcome to the Dashboard!</h2>
+    <h2>Welcome to the Root Dashboard!</h2>
 
     <a href="{{ url_for('register_manager') }}">
         <button>Add Manager User</button>
@@ -19,7 +19,7 @@
         </tr>
         {% for manager in managers %}
         <tr>
-            <td>{{ manager.username }}</td>
+            <td>{{ manager.manager_username }}</td>
         </tr>
         {% endfor %}
     </table>
