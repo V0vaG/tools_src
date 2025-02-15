@@ -28,6 +28,22 @@
         {% endfor %}
     </table>
 
+    <h3>Tools List</h3>
+    <table border="1">
+        <tr>
+            <th>Tool Name</th>
+            <th>ID</th>
+            <th>Description</th>
+        </tr>
+        {% for tool in tools %}
+        <tr>
+            <td>{{ tool.name }}</td>
+            <td>{{ tool.id }}</td>
+            <td>{{ tool.description }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
     <br>
     <a href="{{ url_for('logout') }}">Logout</a>
 </body>

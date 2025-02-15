@@ -20,6 +20,12 @@ def save_users(users):
     with open(USERS_FILE, 'w') as file:
         json.dump(users, file, indent=4)
 
+def get_tools(manager_username):
+    for manager in get_managers():
+        if manager['manager_username'] == manager_username:
+            return manager.get("tools", [])
+    return []
+
 def get_root_user():
     users = load_users()
     return users[0] if users else None
@@ -162,7 +168,8 @@ def manager_dashboard():
         return redirect(url_for('login'))
     manager_username = session['user_id']
     users = get_users(manager_username)
-    return render_template('manager_dashboard.html', users=users)
+    tools = get_tools(manager_username)
+    return render_template('manager_dashboard.html', users=users, tools=tools)
 
 @app.route('/user_dashboard')
 def user_dashboard():
