@@ -1,11 +1,14 @@
-
-[{"manager_username": "v1", "password_hash": "pbkdf2:sha256:600000$MF2MoDA0pAZvbM3m$4d852b7aa946d4d89ebfe7475628357ea5f67437b6b5cfb4a6fccf29a44dfa68",
-    "users":[ 
-        {"user": "user1", "password_hash": "pbkdf2:sha256:600000$M....................."}, 
-        {"user": "user2", "password_hash": "pbkdf2:sha256:60................................."}]
-},
-{"manager_username": "v2", "password_hash": "pbkdf2:sha256:600000$e2C7Ib3DdBwJleXN$bb516c2c526308148fb5a8f4d11ed55e59562e1e79d3bb9528d6b7c5ea6bf52f",
-    "users":[ 
-        {"user": "user1a", "password_hash": "pbkdf2:sha256:600000$M....................."}, 
-        {"user": "user2a", "password_hash": "pbkdf2:sha256:60................................."}]
-}]
+[{"root_user": "vova", "password_hash": "pbkdf2:sha256:600000$MF2MoD...."},
+    {"users":[
+        {"manager_username": "v1", "password_hash": "pbkdf2:sha256:600000$MF2M.....",
+            "users":[ 
+                {"user": "user1", "password_hash": "pbkdf2:sha256:600000$M....................."}, 
+                {"user": "user2", "password_hash": "pbkdf2:sha256:60................................."}]
+        },
+        {"manager_username": "v2", "password_hash": "pbkdf2:sha256:600000$e2C7.....",
+            "users":[ 
+                {"user": "user1a", "password_hash": "pbkdf2:sha256:600000$M....................."}, 
+                {"user": "user2a", "password_hash": "pbkdf2:sha256:60................................."}]
+        }]
+    }
+]

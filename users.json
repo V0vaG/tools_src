@@ -1,0 +1,30 @@
+[
+    {
+        "root_user": "v",
+        "password_hash": "pbkdf2:sha256:600000$oVXwlslPOhoK8NMX$334cd7cfe9c52fd8539798024762dbdf9162573781189df133f7ee9c8e890afc"
+    },
+    {
+        "users": [
+            {
+                "manager_username": "va",
+                "password_hash": "pbkdf2:sha256:600000$Ru5rBgSBxohNVUJb$619db070214f479d0ae4f242fe50cc22507ffc9eae63993433cc02db478364e5",
+                "users": [
+                    {
+                        "user": "a",
+                        "password_hash": "pbkdf2:sha256:600000$90T8MJEujfgFc26T$f216a36cbd03546c59a6973298dd08296353463576aabec3392365a39f23d710"
+                    }
+                ]
+            },
+            {
+                "manager_username": "vb",
+                "password_hash": "pbkdf2:sha256:600000$pNIvjQAvP4o6UHSA$3e6923263b52d87896424549358cdd41cbc6a7a6fa4a347bd12d4cc210096731",
+                "users": [
+                    {
+                        "user": "b",
+                        "password_hash": "pbkdf2:sha256:600000$xUmQH2kIBs9CRwrB$813e1154c3063bf7f0c3f11296c537687041ae43f1e30e3dde53316b6ecb116a"
+                    }
+                ]
+            }
+        ]
+    }
+]
