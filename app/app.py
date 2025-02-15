@@ -71,6 +71,24 @@ def ensure_jsqr_library():
             with open(JSQR_FILE, 'w', encoding='utf-8') as file:
                 file.write(response.text)
 
+def remove_user(manager_username, username):
+    users = load_users()
+    for manager in users[1]["users"]:
+        if manager['manager_username'] == manager_username:
+            manager["users"] = [user for user in manager.get("users", []) if user["user"] != username]
+            break
+    save_users(users)
+
+@app.route('/remove_user', methods=['POST'])
+def remove_user_route():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    manager_username = session['user_id']
+    username = request.form['username']
+    remove_user(manager_username, username)
+    flash('User removed successfully!', 'success')
+    return redirect(url_for('manager_dashboard'))
+
 @app.before_request
 def check_root_user():
     if not is_root_registered():
@@ -200,6 +218,24 @@ def save_tool(manager_username, tool_name, tool_id, tool_description):
             manager.setdefault("tools", []).append({"name": tool_name, "id": tool_id, "description": tool_description, "status": "HOME"})
             break
     save_users(users)
+
+def remove_tool(manager_username, tool_id):
+    users = load_users()
+    for manager in users[1]["users"]:
+        if manager['manager_username'] == manager_username:
+            manager["tools"] = [tool for tool in manager.get("tools", []) if tool["id"] != tool_id]
+            break
+    save_users(users)
+
+@app.route('/remove_tool', methods=['POST'])
+def remove_tool_route():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    manager_username = session['user_id']
+    tool_id = request.form['tool_id']
+    remove_tool(manager_username, tool_id)
+    flash('Tool removed successfully!', 'success')
+    return redirect(url_for('manager_dashboard'))
 
 @app.route('/logout')
 def logout():

@@ -28,6 +28,17 @@
         {% endfor %}
     </table>
 
+    <h3>Remove User</h3>
+    <form action="{{ url_for('remove_user_route') }}" method="post">
+        <label for="username">Select a user to remove:</label>
+        <select name="username" id="username" required>
+            {% for user in users %}
+            <option value="{{ user.user }}">{{ user.user }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Remove</button>
+    </form>
+
     <h3>Tools List</h3>
     <table border="1">
         <tr>
@@ -45,6 +56,18 @@
         </tr>
         {% endfor %}
     </table>
+    
+    <h3>Remove Tool</h3>
+    <form action="{{ url_for('remove_tool_route') }}" method="post">
+        <label for="tool_id">Select a tool to remove:</label>
+        <select name="tool_id" id="tool_id" required>
+            {% for tool in tools %}
+            <option value="{{ tool.id }}">{{ tool.name }} (ID: {{ tool.id }})</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Remove</button>
+    </form>
+    
 
     <br>
     <a href="{{ url_for('logout') }}">Logout</a>

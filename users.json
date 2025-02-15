@@ -10,28 +10,11 @@
                 "password_hash": "pbkdf2:sha256:600000$Ru5rBgSBxohNVUJb$619db070214f479d0ae4f242fe50cc22507ffc9eae63993433cc02db478364e5",
                 "users": [
                     {
-                        "user": "a",
-                        "password_hash": "pbkdf2:sha256:600000$90T8MJEujfgFc26T$f216a36cbd03546c59a6973298dd08296353463576aabec3392365a39f23d710"
+                        "user": "b",
+                        "password_hash": "pbkdf2:sha256:600000$dSpU65Z7AwfiQg4l$2e6a4346b57ba8bd060a2a85e553bcb482379b4ef70b2427d85771bc3300eeb2"
                     }
                 ],
-                "tools": [
-                    {
-                        "name": "car_1",
-                        "id": "1",
-                        "description": "111 car"
-                    },
-                    {
-                        "name": "car 2",
-                        "id": "222",
-                        "description": "222 car"
-                    },
-                    {
-                        "name": "car33",
-                        "id": "33",
-                        "description": "333",
-                        "status": "HOME"
-                    }
-                ]
+                "tools": []
             },
             {
                 "manager_username": "vb",
@@ -41,7 +24,8 @@
                         "user": "b",
                         "password_hash": "pbkdf2:sha256:600000$xUmQH2kIBs9CRwrB$813e1154c3063bf7f0c3f11296c537687041ae43f1e30e3dde53316b6ecb116a"
                     }
-                ]
+                ],
+                "tools": []
             }
         ]
     }
