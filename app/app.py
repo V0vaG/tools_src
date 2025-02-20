@@ -14,8 +14,11 @@ FILES_PATH = os.path.join(HOME_DIR, "script_files", alias)
 DATA_DIR = os.path.join(FILES_PATH, "data")
 USERS_FILE = os.path.join(DATA_DIR, 'users.json')
 JSQR_FILE = 'app/static/jsQR.js'
-
 JSQR_URL = 'https://raw.githubusercontent.com/cozmo/jsQR/master/dist/jsQR.js'
+
+# Ensure the directory exists
+os.makedirs(DATA_DIR, exist_ok=True)
+
 
 def load_users():
     if os.path.exists(USERS_FILE):
