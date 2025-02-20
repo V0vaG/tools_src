@@ -6,8 +6,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
-USERS_FILE = 'users.json'
+
+# Set up paths
+alias = "tools"
+HOME_DIR = os.path.expanduser("~")
+FILES_PATH = os.path.join(HOME_DIR, "script_files", alias)
+DATA_DIR = os.path.join(FILES_PATH, "data")
+USERS_FILE = os.path.join(DATA_DIR, 'users.json')
 JSQR_FILE = 'app/static/jsQR.js'
+
 JSQR_URL = 'https://raw.githubusercontent.com/cozmo/jsQR/master/dist/jsQR.js'
 
 def load_users():
