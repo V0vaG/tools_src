@@ -109,6 +109,15 @@ def update_tool_status(manager_username, tool_id, user_name):
                     return True
     return False
 
+def is_root_registered():
+    return bool(get_root_user())
+
+@app.route('/')
+def index():
+    if not is_root_registered():
+        return redirect(url_for('register_root'))
+    return redirect(url_for('login'))
+
 @app.route('/scan_tool', methods=['GET', 'POST'])
 def scan_tool():
     if 'user_id' not in session:
